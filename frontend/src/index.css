@@ -1,0 +1,572 @@
+@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+
+/* ═══════════════════════════════════════════
+   OBSIDIAN — Pixel Art Design System
+   ═══════════════════════════════════════════ */
+
+:root {
+  --bg: #0a0a0a;
+  --surface: #111111;
+  --surface-highlight: #1a1a1a;
+  --surface-hover: #222222;
+  --lava: #e25822;
+  --lava-dark: #b8441a;
+  --warm: #f5a623;
+  --ice: #4fc3f7;
+  --ice-dark: #2a9fd6;
+  --stone: #4a4a4a;
+  --stone-light: #888888;
+  --text: #ffffff;
+  --text-dim: #aaaaaa;
+  --border-outer: #222222;
+  --border-inner: #444444;
+  --font: 'Press Start 2P', monospace;
+}
+
+/* ── Reset ── */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  border-radius: 0 !important;
+  image-rendering: pixelated;
+}
+
+html, body, #root {
+  height: 100%;
+  width: 100%;
+  overflow-x: hidden;
+}
+
+body {
+  background-color: var(--bg);
+  color: var(--text);
+  font-family: var(--font);
+  font-size: 10px;
+  line-height: 1.6;
+  -webkit-font-smoothing: none;
+  -moz-osx-font-smoothing: unset;
+}
+
+/* ── Minecraft Double Border ── */
+.mc-border {
+  border: 4px solid var(--border-outer);
+  outline: 2px solid var(--border-inner);
+  outline-offset: -6px;
+}
+
+.mc-border-lava {
+  border: 4px solid var(--lava);
+  outline: 2px solid var(--lava-dark);
+  outline-offset: -6px;
+}
+
+.mc-border-ice {
+  border: 4px solid var(--ice);
+  outline: 2px solid var(--ice-dark);
+  outline-offset: -6px;
+}
+
+/* ── Layout ── */
+.app-container {
+  max-width: 640px;
+  margin: 0 auto;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  padding: 0 8px;
+}
+
+/* ── Header ── */
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 8px;
+  border-bottom: 4px solid var(--border-outer);
+}
+
+.header-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.title {
+  font-size: 20px;
+  letter-spacing: 4px;
+  user-select: none;
+}
+
+.title-lava {
+  color: var(--lava);
+}
+
+.title-ice {
+  color: var(--ice);
+}
+
+.puzzle-number {
+  font-size: 10px;
+  color: var(--stone-light);
+}
+
+.header-right {
+  display: flex;
+  gap: 8px;
+}
+
+.icon-btn {
+  width: 36px;
+  height: 36px;
+  background: var(--surface);
+  border: 3px solid var(--border-outer);
+  outline: 1px solid var(--border-inner);
+  outline-offset: -4px;
+  color: var(--text);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font);
+  font-size: 12px;
+}
+
+.icon-btn:hover {
+  background: var(--text);
+  color: var(--bg);
+}
+
+.icon-btn:active {
+  transform: translateY(2px);
+}
+
+/* ── Guess Counter ── */
+.guess-counter {
+  text-align: center;
+  padding: 16px 0 8px;
+  font-size: 14px;
+  letter-spacing: 3px;
+  color: var(--text);
+}
+
+/* ── Input Area ── */
+.input-area {
+  padding: 8px 0;
+}
+
+.input-row {
+  display: flex;
+  gap: 8px;
+}
+
+.guess-input {
+  flex: 1;
+  background: var(--surface);
+  border: 4px solid var(--border-outer);
+  outline: 2px solid var(--border-inner);
+  outline-offset: -6px;
+  color: var(--text);
+  font-family: var(--font);
+  font-size: 11px;
+  padding: 12px 16px;
+}
+
+.guess-input::placeholder {
+  color: var(--stone);
+}
+
+.guess-input:focus {
+  border-color: var(--ice);
+  outline-color: var(--ice-dark);
+  outline-style: solid;
+}
+
+.guess-btn {
+  background: var(--lava);
+  border: 4px solid var(--lava-dark);
+  outline: 2px solid #ff7043;
+  outline-offset: -6px;
+  color: var(--bg);
+  font-family: var(--font);
+  font-size: 11px;
+  padding: 12px 20px;
+  cursor: pointer;
+  letter-spacing: 2px;
+  font-weight: bold;
+  white-space: nowrap;
+}
+
+.guess-btn:hover {
+  background: var(--bg);
+  color: var(--lava);
+  border-color: var(--lava);
+}
+
+.guess-btn:active {
+  transform: translateY(2px);
+}
+
+.guess-btn:disabled {
+  background: var(--stone);
+  border-color: var(--border-outer);
+  outline-color: var(--border-inner);
+  color: var(--stone-light);
+  cursor: not-allowed;
+}
+
+.hint-text {
+  font-size: 8px;
+  color: var(--stone-light);
+  padding: 8px 0 4px;
+  text-align: center;
+  letter-spacing: 1px;
+}
+
+.error-message {
+  font-size: 8px;
+  color: var(--lava);
+  padding: 8px 0 4px;
+  text-align: center;
+  letter-spacing: 1px;
+  animation: shake 0.4s ease-in-out;
+}
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-4px); }
+  50% { transform: translateX(4px); }
+  75% { transform: translateX(-4px); }
+}
+
+/* ── Sort Toggle ── */
+.sort-bar {
+  display: flex;
+  justify-content: flex-end;
+  padding: 8px 0 4px;
+}
+
+.sort-toggle {
+  background: var(--surface);
+  border: 3px solid var(--border-outer);
+  outline: 1px solid var(--border-inner);
+  outline-offset: -4px;
+  color: var(--stone-light);
+  font-family: var(--font);
+  font-size: 7px;
+  padding: 6px 10px;
+  cursor: pointer;
+  letter-spacing: 1px;
+}
+
+.sort-toggle:hover {
+  background: var(--text);
+  color: var(--bg);
+}
+
+.sort-toggle:active {
+  transform: translateY(2px);
+}
+
+/* ── Guess List ── */
+.guess-list {
+  flex: 1;
+  overflow-y: auto;
+  padding: 4px 0;
+  min-height: 0;
+}
+
+.guess-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 12px;
+  margin-bottom: 4px;
+  background: var(--surface);
+  border: 3px solid var(--border-outer);
+  outline: 1px solid var(--border-inner);
+  outline-offset: -4px;
+  gap: 8px;
+}
+
+.guess-row.latest {
+  background: var(--surface-highlight);
+  border-color: var(--stone);
+}
+
+.guess-row.winner {
+  border-color: var(--lava);
+  outline-color: var(--warm);
+}
+
+.guess-word {
+  font-size: 10px;
+  color: var(--text);
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  flex-shrink: 0;
+}
+
+.guess-info {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.temp-tag {
+  font-size: 12px;
+  padding: 3px 6px;
+  letter-spacing: 1px;
+  border: 2px solid;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 20px;
+}
+
+.fire-gif {
+  height: 18px;
+  width: auto;
+  image-rendering: auto; /* In case the gif isn't pixel art */
+}
+
+.temp-lava {
+  color: var(--lava);
+  border-color: var(--lava);
+}
+
+.temp-warm {
+  color: var(--warm);
+  border-color: var(--warm);
+}
+
+.temp-cold {
+  color: var(--ice);
+  border-color: var(--ice);
+}
+
+.temp-frozen {
+  color: var(--stone-light);
+  border-color: var(--stone);
+}
+
+.temp-match {
+  color: var(--text);
+  border-color: var(--text);
+  background: var(--text);
+}
+
+.rank-number {
+  font-size: 9px;
+  min-width: 60px;
+  text-align: right;
+  letter-spacing: 1px;
+}
+
+.rank-lava { color: var(--lava); }
+.rank-warm { color: var(--warm); }
+.rank-cold { color: var(--ice); }
+.rank-frozen { color: var(--stone-light); }
+.rank-match { color: var(--text); }
+
+.duplicate-badge {
+  font-size: 6px;
+  color: var(--warm);
+  border: 2px solid var(--warm);
+  padding: 2px 4px;
+  letter-spacing: 1px;
+}
+
+/* ── Temperature Progress Bar ── */
+.temp-bar-container {
+  padding: 16px 0 24px;
+}
+
+.temp-bar-labels {
+  display: flex;
+  justify-content: space-between;
+  padding: 0 4px 8px;
+  font-size: 8px;
+  letter-spacing: 2px;
+}
+
+.temp-bar-labels .frozen-label {
+  color: var(--ice);
+}
+
+.temp-bar-labels .lava-label {
+  color: var(--lava);
+}
+
+.temp-bar {
+  display: flex;
+  gap: 3px;
+  padding: 8px;
+  background: var(--surface);
+  border: 4px solid var(--border-outer);
+  outline: 2px solid var(--border-inner);
+  outline-offset: -6px;
+  position: relative;
+}
+
+.temp-block {
+  flex: 1;
+  height: 20px;
+  background: var(--border-outer);
+  position: relative;
+}
+
+.temp-block.filled-cold {
+  background: var(--ice);
+}
+
+.temp-block.filled-warm {
+  background: var(--warm);
+}
+
+.temp-block.filled-lava {
+  background: var(--lava);
+}
+
+.temp-block.marker {
+  background: var(--text);
+  box-shadow: 0 0 0 2px var(--lava);
+}
+
+.temp-block.marker::after {
+  content: '';
+  position: absolute;
+  top: -8px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 0;
+  height: 0;
+  border-left: 6px solid transparent;
+  border-right: 6px solid transparent;
+  border-top: 8px solid var(--text);
+}
+
+/* ── Win Banner ── */
+.win-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.92);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+}
+
+.win-banner {
+  background: var(--bg);
+  border: 6px solid var(--lava);
+  outline: 3px solid var(--warm);
+  outline-offset: -9px;
+  padding: 40px 48px;
+  text-align: center;
+  max-width: 500px;
+  width: 90%;
+}
+
+.win-title {
+  font-size: 18px;
+  color: var(--lava);
+  letter-spacing: 4px;
+  margin-bottom: 24px;
+}
+
+.win-subtitle {
+  font-size: 9px;
+  color: var(--text-dim);
+  margin-bottom: 16px;
+  letter-spacing: 2px;
+}
+
+.win-stat {
+  font-size: 28px;
+  color: var(--text);
+  margin-bottom: 8px;
+}
+
+.win-stat-label {
+  font-size: 8px;
+  color: var(--stone-light);
+  margin-bottom: 24px;
+  letter-spacing: 2px;
+}
+
+.win-close-btn {
+  background: var(--lava);
+  border: 4px solid var(--lava-dark);
+  outline: 2px solid #ff7043;
+  outline-offset: -6px;
+  color: var(--bg);
+  font-family: var(--font);
+  font-size: 9px;
+  padding: 10px 24px;
+  cursor: pointer;
+  letter-spacing: 2px;
+}
+
+.win-close-btn:hover {
+  background: var(--bg);
+  color: var(--lava);
+  border-color: var(--lava);
+}
+
+.win-close-btn:active {
+  transform: translateY(2px);
+}
+
+/* ── Pixel Scrollbar ── */
+.guess-list::-webkit-scrollbar {
+  width: 12px;
+}
+
+.guess-list::-webkit-scrollbar-track {
+  background: var(--border-outer);
+  border: 2px solid var(--border-inner);
+}
+
+.guess-list::-webkit-scrollbar-thumb {
+  background: var(--stone);
+  border: 2px solid var(--border-outer);
+}
+
+.guess-list::-webkit-scrollbar-thumb:hover {
+  background: var(--stone-light);
+}
+
+/* ── Empty State ── */
+.empty-state {
+  text-align: center;
+  padding: 48px 16px;
+  color: var(--stone);
+  font-size: 8px;
+  letter-spacing: 2px;
+  line-height: 2.4;
+}
+
+.empty-state-icon {
+  font-size: 10px;
+  margin-bottom: 16px;
+  color: var(--stone-light);
+  letter-spacing: 4px;
+}
+
+/* ── Responsive ── */
+@media (max-width: 480px) {
+  .title { font-size: 14px; letter-spacing: 2px; }
+  .guess-counter { font-size: 11px; }
+  .guess-input { font-size: 9px; padding: 10px 12px; }
+  .guess-btn { font-size: 9px; padding: 10px 14px; }
+  .guess-word { font-size: 8px; }
+  .rank-number { font-size: 8px; min-width: 50px; }
+  .temp-tag { font-size: 6px; }
+  .win-banner { padding: 24px 20px; }
+  .win-title { font-size: 14px; }
+}
