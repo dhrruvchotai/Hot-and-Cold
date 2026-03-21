@@ -2,6 +2,10 @@ import numpy as np
 from model_loader import model
 from cache import init_db, get_cached_rankings, save_rankings
 
+#do not compute the word to rank every time used a dict to cache it
+_rank_map_cache = {}
+_score_map_cache = {}
+
 # initialize DB on startup
 init_db()
 
@@ -34,20 +38,26 @@ def get_rank_and_score(secret_word: str, guess_word: str):
     if not word_exists(secret):
         return {"error": f"Secret word '{secret}' not in vocabulary"}
 
-    rankings = compute_rankings(secret)
+    #if the rankings and similarity score for the secret is not computed then compute it otherwise reuse it
+    if secret not in _rank_map_cache:
+        rank_map,score_map = compute_rankings(secret)
 
-    if rankings is None:
-        return {"error": f"Could not compute rankings for '{secret}'"}
+        if rank_map is None:
+            return {"error": f"Could not compute rankings for '{secret}'"}
+    
+        _rank_map_cache[secret] = rank_map
+        _score_map_cache[secret] = score_map
 
-    word_to_rank = {item[0]: idx + 1 for idx, item in enumerate(rankings)}
-    score_map = {item[0]: item[1] for item in rankings}
+    #to reuse the already computed rankings for a secret word
+    word_to_rank = _rank_map_cache[secret]
+    score_map = _score_map_cache[secret]
 
     if guess not in word_to_rank:
         return {"error": f"'{guess}' could not be ranked!"}
 
     rank = word_to_rank[guess]
     score = score_map[guess]
-    total = len(rankings)
+    total = len(word_to_rank)
     percentile = round((1 - (rank / total)) * 100, 1)
 
     return {
@@ -61,20 +71,25 @@ def get_rank_and_score(secret_word: str, guess_word: str):
 def compute_rankings(secret_word: str):
     word = secret_word.lower()
 
-    cached = get_cached_rankings(word)
-    if cached:
-        return cached
+    rank_map,score_map = get_cached_rankings(word)
+    if rank_map is not None:
+        _rank_map_cache[word] = rank_map
+        _score_map_cache[word] = score_map
+        return rank_map,score_map
 
     if not word_exists(word):
-        return None
+        return None, None
 
     results = [(word, 1.0)] + list(
         model.most_similar(word, topn=len(model.key_to_index))
     )
 
-    # save to SQLite for next time
-    save_rankings(word, results)
-    return results
+    rank_map = {item[0]: idx + 1 for idx, item in enumerate(results)}
+    score_map = {item[0]: item[1] for item in results}
+
+
+    save_rankings(word, rank_map=rank_map,score_map=score_map)
+    return rank_map,score_map
 
 def get_temperature_label(rank: int):
     if rank == 1:         return "🎯"
@@ -82,6 +97,7 @@ def get_temperature_label(rank: int):
     elif rank <= 500:     return "☀️"
     elif rank <= 20000:   return "❄️"
     else:                 return "🧊"
+    
 # def compute_rankings(secret_word:str):
 #     if word_exists(secret_word):
 #         target_vector = model.get_vector(secret_word)

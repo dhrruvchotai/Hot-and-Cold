@@ -1,34 +1,38 @@
-# cache.py
 import sqlite3
 import json
 import os
 
-DB_PATH = "./cached_model/rankings_cache.db" 
+DB_PATH = "./cached_model/rankings_cache.db"
+_conn = None
+
+def get_conn():
+    global _conn
+    if _conn is None:
+        _conn = sqlite3.connect(DB_PATH, check_same_thread=False)
+    return _conn
 
 def init_db():
-    conn = sqlite3.connect(DB_PATH)
-    conn.execute("""
+    os.makedirs("./cached_model", exist_ok=True)
+    get_conn().execute("""
         CREATE TABLE IF NOT EXISTS rankings (
             word TEXT PRIMARY KEY,
             data TEXT NOT NULL
         )
     """)
-    conn.commit()
-    conn.close()
+    get_conn().commit()
 
 def get_cached_rankings(word: str):
-    conn = sqlite3.connect(DB_PATH)
-    row = conn.execute(
+    row = get_conn().execute(
         "SELECT data FROM rankings WHERE word = ?", (word,)
     ).fetchone()
-    conn.close()
-    return json.loads(row[0]) if row else None
+    if row:
+        data = json.loads(row[0])
+        return data["rank_map"], data["score_map"]
+    return None, None
 
-def save_rankings(word: str, rankings: list):
-    conn = sqlite3.connect(DB_PATH)
-    conn.execute(
+def save_rankings(word: str, rank_map: dict, score_map: dict):
+    get_conn().execute(
         "INSERT OR REPLACE INTO rankings (word, data) VALUES (?, ?)",
-        (word, json.dumps(rankings))
+        (word, json.dumps({"rank_map": rank_map, "score_map": score_map}))
     )
-    conn.commit()
-    conn.close()
+    get_conn().commit()
