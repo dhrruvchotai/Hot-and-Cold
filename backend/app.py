@@ -2,9 +2,9 @@ from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from datetime import date
-
 from word_manager import get_todays_word
 from game_engine import get_rank_and_score, word_exists
+from game_engine import get_rank_and_score, word_exists, get_word_by_rank
 
 app = FastAPI(title="Obsidian Game API")
 
@@ -23,6 +23,11 @@ class DailyGuessRequest(BaseModel):
 class GuessRequest(BaseModel):
     secret_word: str
     guess_word: str
+
+class HintRequest(BaseModel):
+    best_rank : int
+    hints_used : int
+
 
 def get_puzzle_number() -> int:
     start = date(2026, 3, 18)
@@ -85,3 +90,27 @@ def guess(req: GuessRequest):
 @app.get("/check-word/{word}")
 def check_word(word: str):
     return {"word": word.lower(), "exists": word_exists(word)}
+
+@app.post("/hint")
+def get_hint(request: HintRequest):
+    
+    # Max 3 hints allowed
+    if request.hints_used >= 3:
+        raise HTTPException(status_code=400, detail="No hints remaining")
+
+    # Hint rank = best rank - 5 (closer to target word which is rank 1)
+    hint_rank = request.best_rank - 5
+
+    # Rank can't go below 1 (that would be the answer itself)
+    if hint_rank < 1:
+        hint_rank = 1
+
+    secret, difficulty = get_todays_word("./data/word_list.txt")
+
+    hint_word = get_word_by_rank(secret, hint_rank)
+
+    return {
+        "hint_word": hint_word,
+        "hint_rank": hint_rank,
+        "hints_remaining": 3 - (request.hints_used + 1)
+    }

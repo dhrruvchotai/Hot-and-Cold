@@ -97,6 +97,21 @@ def get_temperature_label(rank: int):
     elif rank <= 500:     return "☀️"
     elif rank <= 20000:   return "❄️"
     else:                 return "🧊"
+
+def get_word_by_rank(secret_word: str, rank: int):
+    secret = secret_word.lower()
+
+    if secret not in _rank_map_cache:
+        rank_map, score_map = compute_rankings(secret)
+        if rank_map is None:
+            return None
+        _rank_map_cache[secret] = rank_map
+        _score_map_cache[secret] = score_map
+
+    # Reversing the map rank to word
+    rank_to_word = {v: k for k, v in _rank_map_cache[secret].items()}
+
+    return rank_to_word.get(rank, None)
     
 # def compute_rankings(secret_word:str):
 #     if word_exists(secret_word):
