@@ -98,10 +98,8 @@ def get_hint(request: HintRequest):
     if request.hints_used >= 3:
         raise HTTPException(status_code=400, detail="No hints remaining")
 
-    # Hint rank = best rank - 5 (closer to target word which is rank 1)
-    hint_rank = request.best_rank - 5
+    hint_rank = request.best_rank - 175
 
-    # Rank can't go below 1 (that would be the answer itself)
     if hint_rank < 1:
         hint_rank = 1
 

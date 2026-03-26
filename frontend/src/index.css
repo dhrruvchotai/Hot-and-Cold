@@ -522,6 +522,128 @@ body {
   transform: translateY(2px);
 }
 
+/* ── Modals ── */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.92);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+}
+
+.modal-content {
+  background: var(--bg);
+  border: 6px solid var(--border-outer);
+  outline: 3px solid var(--border-inner);
+  outline-offset: -9px;
+  padding: 32px;
+  max-width: 500px;
+  width: 90%;
+  text-align: left;
+}
+
+.modal-title {
+  font-size: 16px;
+  color: var(--ice);
+  letter-spacing: 2px;
+  margin-bottom: 24px;
+  text-align: center;
+}
+
+.modal-text {
+  font-size: 11px;
+  color: var(--text-dim);
+  margin-bottom: 16px;
+  line-height: 1.8;
+}
+
+.modal-text strong {
+  color: var(--text);
+}
+
+.modal-close-btn {
+  background: var(--surface);
+  border: 4px solid var(--border-outer);
+  outline: 2px solid var(--border-inner);
+  outline-offset: -6px;
+  color: var(--text);
+  font-family: var(--font);
+  font-size: 10px;
+  padding: 10px 24px;
+  cursor: pointer;
+  letter-spacing: 2px;
+  margin-top: 24px;
+  width: 100%;
+}
+
+.modal-close-btn:hover {
+  background: var(--text);
+  color: var(--bg);
+}
+
+.modal-close-btn:active {
+  transform: translateY(2px);
+}
+
+.hint-button {
+  background: var(--warm);
+  border: 4px solid var(--lava);
+  outline: 2px solid var(--lava-dark);
+  outline-offset: -6px;
+  color: var(--bg);
+  font-family: var(--font);
+  font-size: 10px;
+  padding: 12px 24px;
+  cursor: pointer;
+  letter-spacing: 2px;
+  width: 100%;
+  margin-bottom: 16px;
+  font-weight: bold;
+}
+
+.hint-button:hover:not(:disabled) {
+  background: var(--bg);
+  color: var(--warm);
+  border-color: var(--warm);
+}
+
+.hint-button:disabled {
+  background: var(--stone);
+  border-color: var(--border-outer);
+  outline-color: var(--border-inner);
+  color: var(--stone-light);
+  cursor: not-allowed;
+}
+
+.hints-text {
+  font-size: 9px;
+  color: var(--text-dim);
+  text-align: center;
+  margin-bottom: 16px;
+}
+
+.hint-result {
+  background: var(--surface-highlight);
+  border: 2px solid var(--border-outer);
+  padding: 12px;
+  margin-top: 16px;
+  text-align: center;
+}
+
+.hint-result-word {
+  font-size: 14px;
+  color: var(--lava);
+  margin-bottom: 8px;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+}
+
+
 /* ── Pixel Scrollbar ── */
 .guess-list::-webkit-scrollbar {
   width: 12px;
