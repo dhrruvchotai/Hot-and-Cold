@@ -1,24 +1,24 @@
-import { useState, useRef, useEffect } from 'react';
-import './App.css';
+import { useState, useRef, useEffect } from "react";
+import "./App.css";
 
 /* ══════════════════════════════════════════════════════
    OBSIDIAN — Hot & Cold Semantic Word Game
    Real API Integration
    ══════════════════════════════════════════════════════ */
 
-const API_BASE = 'http://localhost:8000';
+const API_BASE = "https://dhrruvchotai-word-similarity-engine.hf.space";
 
 // ── API Functions ──
 async function fetchHint(bestRank, hintsUsed) {
   const res = await fetch(`${API_BASE}/hint`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ best_rank: bestRank, hints_used: hintsUsed }),
   });
 
   if (!res.ok) {
     const err = await res.json();
-    throw new Error(err.detail || 'Failed to get hint');
+    throw new Error(err.detail || "Failed to get hint");
   }
 
   return res.json();
@@ -26,20 +26,20 @@ async function fetchHint(bestRank, hintsUsed) {
 
 async function fetchDailyInfo() {
   const res = await fetch(`${API_BASE}/daily-info`);
-  if (!res.ok) throw new Error('Failed to fetch daily info');
+  if (!res.ok) throw new Error("Failed to fetch daily info");
   return res.json();
 }
 
 async function submitGuess(word) {
   const res = await fetch(`${API_BASE}/daily-guess`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ guess_word: word }),
   });
 
   if (!res.ok) {
     const err = await res.json();
-    throw new Error(err.detail || 'Unknown error');
+    throw new Error(err.detail || "Unknown error");
   }
 
   const data = await res.json();
@@ -55,28 +55,40 @@ async function submitGuess(word) {
 // ── Temperature helpers ──
 function getTempClass(label) {
   switch (label) {
-    case '🎯': return 'temp-match';
-    case '🔥': return 'temp-lava';
-    case '☀️': return 'temp-warm';
-    case '❄️': return 'temp-cold';
-    case '🧊': return 'temp-frozen';
-    default:   return 'temp-frozen';
+    case "🎯":
+      return "temp-match";
+    case "🔥":
+      return "temp-lava";
+    case "☀️":
+      return "temp-warm";
+    case "❄️":
+      return "temp-cold";
+    case "🧊":
+      return "temp-frozen";
+    default:
+      return "temp-frozen";
   }
 }
 
 function getRankClass(label) {
   switch (label) {
-    case '🎯': return 'rank-match';
-    case '🔥': return 'rank-lava';
-    case '☀️': return 'rank-warm';
-    case '❄️': return 'rank-cold';
-    case '🧊': return 'rank-frozen';
-    default:   return 'rank-frozen';
+    case "🎯":
+      return "rank-match";
+    case "🔥":
+      return "rank-lava";
+    case "☀️":
+      return "rank-warm";
+    case "❄️":
+      return "rank-cold";
+    case "🧊":
+      return "rank-frozen";
+    default:
+      return "rank-frozen";
   }
 }
 
 function isMatch(label) {
-  return label === '🎯';
+  return label === "🎯";
 }
 
 // ── Pixel SVG Icons ──
@@ -113,7 +125,7 @@ function HeaderBar({ puzzleNumber, onInfoClick, onMenuClick }) {
           <span className="title-lava">OBS</span>
           <span className="title-ice">IDIAN</span>
         </h1>
-        <span className="puzzle-number">#{puzzleNumber ?? '...'}</span>
+        <span className="puzzle-number">#{puzzleNumber ?? "..."}</span>
       </div>
       <div className="header-right">
         <button className="icon-btn" aria-label="Info" onClick={onInfoClick}>
@@ -128,25 +140,21 @@ function HeaderBar({ puzzleNumber, onInfoClick, onMenuClick }) {
 }
 
 function renderLabel(label) {
-  if (label === '🔥') {
+  if (label === "🔥") {
     return <img src="/fire.gif" alt="🔥" className="fire-gif" />;
   }
   return label;
 }
 
 function GuessCounter({ count }) {
-  return (
-    <div className="guess-counter">
-      GUESSES: {count}
-    </div>
-  );
+  return <div className="guess-counter">GUESSES: {count}</div>;
 }
 
 function InputArea({ value, onChange, onSubmit, disabled, error }) {
   const inputRef = useRef(null);
 
   const handleKeyDown = (e) => {
-    if (e.key === 'Enter') {
+    if (e.key === "Enter") {
       onSubmit();
     }
   };
@@ -185,10 +193,12 @@ function InputArea({ value, onChange, onSubmit, disabled, error }) {
 
 function GuessRow({ guess, isLatest }) {
   const rowClass = [
-    'guess-row',
-    isLatest ? 'latest' : '',
-    isMatch(guess.label) ? 'winner' : '',
-  ].filter(Boolean).join(' ');
+    "guess-row",
+    isLatest ? "latest" : "",
+    isMatch(guess.label) ? "winner" : "",
+  ]
+    .filter(Boolean)
+    .join(" ");
 
   return (
     <div className={rowClass}>
@@ -218,7 +228,7 @@ function GuessList({ guesses, sortByRank, onToggleSort, latestIndex }) {
       {guesses.length > 0 && (
         <div className="sort-bar">
           <button className="sort-toggle" onClick={onToggleSort}>
-            {sortByRank ? 'SORT: RANK' : 'SORT: TIME'}
+            {sortByRank ? "SORT: RANK" : "SORT: TIME"}
           </button>
         </div>
       )}
@@ -247,7 +257,13 @@ function TemperatureBar({ bestRank, total }) {
   const BLOCK_COUNT = 20;
   // Convert rank to bar position (rank 1 = rightmost, high rank = leftmost)
   const position = bestRank
-    ? Math.max(0, Math.min(BLOCK_COUNT - 1, Math.floor((1 - bestRank / total) * BLOCK_COUNT)))
+    ? Math.max(
+        0,
+        Math.min(
+          BLOCK_COUNT - 1,
+          Math.floor((1 - bestRank / total) * BLOCK_COUNT),
+        ),
+      )
     : -1;
 
   return (
@@ -259,21 +275,19 @@ function TemperatureBar({ bestRank, total }) {
       <div className="temp-bar">
         {Array.from({ length: BLOCK_COUNT }).map((_, i) => {
           const isMarker = i === position;
-          let fillClass = '';
+          let fillClass = "";
           if (i <= position && position >= 0) {
             const ratio = i / BLOCK_COUNT;
-            if (ratio < 0.3) fillClass = 'filled-cold';
-            else if (ratio < 0.7) fillClass = 'filled-warm';
-            else fillClass = 'filled-lava';
+            if (ratio < 0.3) fillClass = "filled-cold";
+            else if (ratio < 0.7) fillClass = "filled-warm";
+            else fillClass = "filled-lava";
           }
           return (
             <div
               key={i}
-              className={[
-                'temp-block',
-                fillClass,
-                isMarker ? 'marker' : '',
-              ].filter(Boolean).join(' ')}
+              className={["temp-block", fillClass, isMarker ? "marker" : ""]
+                .filter(Boolean)
+                .join(" ")}
             />
           );
         })}
@@ -289,15 +303,22 @@ function InfoModal({ onClose }) {
         <div className="modal-title">HOW TO PLAY</div>
         <div className="modal-text">
           Guess the secret word based on <strong>contextual similarity</strong>.
-          <br /><br />
-          The closer your guess is in meaning to the secret word, the better your rank.
+          <br />
+          <br />
+          The closer your guess is in meaning to the secret word, the better
+          your rank.
         </div>
         <div className="modal-text">
-          <strong>Temperature Scale:</strong><br />
-          🧊 Frozen (Far)<br />
-          ❄️ Cold<br />
-          ☀️ Warm<br />
-          🔥 Lava (Very Close!)<br />
+          <strong>Temperature Scale:</strong>
+          <br />
+          🧊 Frozen (Far)
+          <br />
+          ❄️ Cold
+          <br />
+          ☀️ Warm
+          <br />
+          🔥 Lava (Very Close!)
+          <br />
           🎯 Match (You win!)
         </div>
         <button className="modal-close-btn" onClick={onClose}>
@@ -316,20 +337,18 @@ function MenuModal({ onClose, onGetHint, hintsUsed, bestRank, hintError }) {
     <div className="modal-overlay" onClick={onClose}>
       <div className="modal-content" onClick={(e) => e.stopPropagation()}>
         <div className="modal-title">MENU</div>
-        <div className="hints-text">
-          {remaining} HINTS REMAINING
-        </div>
-        
+        <div className="hints-text">{remaining} HINTS REMAINING</div>
+
         <button
           className="hint-button"
           onClick={onGetHint}
           disabled={!canGetHint}
         >
-          {bestRank === null ? 'MAKE A GUESS FIRST' : 'GET A HINT'}
+          {bestRank === null ? "MAKE A GUESS FIRST" : "GET A HINT"}
         </button>
 
         {hintError && (
-          <div className="error-message" style={{ marginBottom: '16px' }}>
+          <div className="error-message" style={{ marginBottom: "16px" }}>
             {hintError}
           </div>
         )}
@@ -364,7 +383,7 @@ function WinBanner({ guessCount, onClose }) {
 
 function App() {
   const [guesses, setGuesses] = useState([]);
-  const [inputValue, setInputValue] = useState('');
+  const [inputValue, setInputValue] = useState("");
   const [bestRank, setBestRank] = useState(null);
   const [totalWords, setTotalWords] = useState(50000);
   const [gameWon, setGameWon] = useState(false);
@@ -384,9 +403,11 @@ function App() {
     fetchDailyInfo()
       .then((info) => {
         setPuzzleNumber(info.puzzle_number);
-        
+
         // Load state from localStorage for the current puzzle
-        const savedState = localStorage.getItem(`obsidian_state_${info.puzzle_number}`);
+        const savedState = localStorage.getItem(
+          `obsidian_state_${info.puzzle_number}`,
+        );
         if (savedState) {
           try {
             const parsed = JSON.parse(savedState);
@@ -397,12 +418,12 @@ function App() {
             setHintsUsed(parsed.hintsUsed || 0);
             guessIndexRef.current = (parsed.guesses || []).length;
           } catch (e) {
-            console.error('Failed to parse saved state', e);
+            console.error("Failed to parse saved state", e);
           }
         }
       })
       .catch((err) => {
-        console.error('Failed to fetch daily info:', err);
+        console.error("Failed to fetch daily info:", err);
       });
   }, []);
 
@@ -414,9 +435,12 @@ function App() {
         bestRank,
         totalWords,
         gameWon,
-        hintsUsed
+        hintsUsed,
       };
-      localStorage.setItem(`obsidian_state_${puzzleNumber}`, JSON.stringify(stateToSave));
+      localStorage.setItem(
+        `obsidian_state_${puzzleNumber}`,
+        JSON.stringify(stateToSave),
+      );
     }
   }, [guesses, bestRank, totalWords, gameWon, hintsUsed, puzzleNumber]);
 
@@ -430,7 +454,7 @@ function App() {
 
   const processGuess = async (word) => {
     const isDuplicate = guesses.some(
-      (g) => g.word.toLowerCase() === word && !g.isDuplicate
+      (g) => g.word.toLowerCase() === word && !g.isDuplicate,
     );
 
     setIsSubmitting(true);
@@ -453,7 +477,9 @@ function App() {
       setTotalWords(result.total);
 
       if (!isDuplicate) {
-        setBestRank((prev) => (prev === null || result.rank < prev ? result.rank : prev));
+        setBestRank((prev) =>
+          prev === null || result.rank < prev ? result.rank : prev,
+        );
       }
 
       if (result.rank === 1 && !isDuplicate) {
@@ -474,7 +500,7 @@ function App() {
     setHintError(null);
     try {
       const result = await fetchHint(bestRank, hintsUsed);
-      setHintsUsed(prev => prev + 1);
+      setHintsUsed((prev) => prev + 1);
       setShowMenuModal(false);
       await processGuess(result.hint_word);
     } catch (err) {
@@ -487,7 +513,7 @@ function App() {
     if (!word || isSubmitting) return;
     const success = await processGuess(word);
     if (success) {
-      setInputValue('');
+      setInputValue("");
     }
   };
 
@@ -519,9 +545,7 @@ function App() {
           onClose={() => setShowWinBanner(false)}
         />
       )}
-      {showInfoModal && (
-        <InfoModal onClose={() => setShowInfoModal(false)} />
-      )}
+      {showInfoModal && <InfoModal onClose={() => setShowInfoModal(false)} />}
       {showMenuModal && (
         <MenuModal
           onClose={() => setShowMenuModal(false)}

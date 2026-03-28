@@ -5,16 +5,8 @@ from datetime import date
 from word_manager import get_todays_word
 from game_engine import get_rank_and_score, word_exists
 from game_engine import get_rank_and_score, word_exists, get_word_by_rank
-from contextlib import asynccontextmanager
 
-@asynccontextmanager
-async def lifespan(app: FastAPI):
-    # preload model before accepting requests
-    from model_loader import model
-    print("Model loaded!")
-    yield
-
-app = FastAPI(title="Obsidian Game API", lifespan=lifespan)
+app = FastAPI(title="Obsidian Game API")
 
 app.add_middleware(
     CORSMiddleware,
