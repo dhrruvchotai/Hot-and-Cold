@@ -1,7 +1,8 @@
 import hashlib
 from datetime import date
+from typing import Tuple
 
-def get_todays_word(word_list_path:str) -> str:
+def get_todays_word(word_list_path:str) -> Tuple[str,str]:
     with open(word_list_path,"r") as f:
         words = []
         for line in f:
